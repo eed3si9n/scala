@@ -28,6 +28,7 @@ private[internal] trait GlbLubs {
 
   private final val printLubs = scala.sys.props contains "scalac.debug.lub"
   private final val strictInference = settings.strictInference
+  private final val noLub = settings.noLub
 
   /** In case anyone wants to turn off lub verification without reverting anything. */
   private final val verifyLubs = true
@@ -405,13 +406,24 @@ private[internal] trait GlbLubs {
       // the likely and maybe only spot they escape, so fixing here for 2.10.1.
       existentialAbstraction(tparams, dropIllegalStarTypes(lubType))
     }
+    def checkSameTypes(ts0: List[Type]): Type = ts0 match {
+      case List() => NothingTpe
+      case List(t) => t
+      case t0 :: rest =>
+        rest foreach { t =>
+          if (!isSameType(t0, t)) throw new NotSameTypes(ts0)
+        }
+        t0
+    }
     if (printLubs) {
       println(indent + "lub of " + ts + " at depth "+depth)//debug
       indent = indent + "  "
       assert(indent.length <= 100)
     }
     if (StatisticsStatics.areSomeColdStatsEnabled) statistics.incCounter(nestedLubCount)
-    val res = lub0(ts)
+    val res =
+      if (noLub) checkSameTypes(ts)
+      else lub0(ts)
     if (printLubs) {
       indent = indent stripSuffix "  "
       println(indent + "lub of " + ts + " is " + res)//debug

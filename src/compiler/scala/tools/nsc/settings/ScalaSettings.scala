@@ -240,6 +240,7 @@ trait ScalaSettings extends AbsScalaSettings
   val Yreploutdir     = StringSetting     ("-Yrepl-outdir", "path", "Write repl-generated classfiles to given output directory (use \"\" to generate a temporary dir)" , "")
   val YmethodInfer    = BooleanSetting    ("-Yinfer-argument-types", "Infer types for arguments of overridden methods.")
   val YdisableFlatCpCaching  = BooleanSetting    ("-YdisableFlatCpCaching", "Do not cache flat classpath representation of classpath elements from jars across compiler instances.")
+  val noLub           = BooleanSetting    ("-Yno-lub", "Do not infer the least upper bounds.")
   val YcachePluginClassLoader  = CachePolicy.setting("plugin", "compiler plugins")
   val YcacheMacroClassLoader   = CachePolicy.setting("macro", "macros")
   val YpartialUnification = BooleanSetting ("-Ypartial-unification", "Enable partial unification in type constructor inference")

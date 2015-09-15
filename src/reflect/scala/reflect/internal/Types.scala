@@ -4671,6 +4671,9 @@ trait Types
   class NoCommonType(tps: List[Type]) extends Throwable(
     "lub/glb of incompatible types: " + tps.mkString("", " and ", "")) with ControlThrowable
 
+  // Thrown when not same types are found with -Yno-lub
+  case class NotSameTypes(tps: List[Type]) extends TypeError("same types expected: " + tps.mkString("", " and ", ""))
+
   /** A throwable signalling a malformed type */
   class MalformedType(msg: String) extends TypeError(msg) {
     def this(pre: Type, tp: String) = this("malformed type: " + pre + "#" + tp)
