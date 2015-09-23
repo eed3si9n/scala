@@ -420,6 +420,11 @@ private[internal] trait GlbLubs {
         }
         t0
     }
+    // implements -Yno-lub
+    // lub will fail except for the following cases:
+    // 1. Unification with Nothing
+    def doNoLub(ts0: List[Type]): Type =
+      checkSameTypes(ts0 filter { t => !isSameType(t, NothingTpe) })
     if (printLubs) {
       println(indent + "lub of " + ts + " at depth "+depth)//debug
       indent = indent + "  "
@@ -427,7 +432,7 @@ private[internal] trait GlbLubs {
     }
     if (Statistics.canEnable) Statistics.incCounter(nestedLubCount)
     val res =
-      if (noLub) checkSameTypes(ts)
+      if (noLub) doNoLub(ts)
       else lub0(ts)
     if (printLubs) {
       indent = indent stripSuffix "  "
