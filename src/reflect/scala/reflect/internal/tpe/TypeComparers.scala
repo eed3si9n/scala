@@ -113,6 +113,30 @@ trait TypeComparers {
     // if (subsametypeRecursions == 0) undoLog.clear()
   }
 
+  // @pre: at least one argument contains existentials
+  private def sameExistentialTypes(tp1: Type, tp2: Type): Boolean = (
+    try {
+      skolemizationLevel += 1
+      (tp1.skolemizeExistential.normalize, tp2.skolemizeExistential.normalize) match {
+        case (sk1: TypeRef, sk2: TypeRef) =>
+          equalSymsAndPrefixes(sk1.sym, sk1.pre, sk2.sym, sk2.pre) &&
+            (isSameHKTypes(sk1, sk2) ||
+              ((sk1.args corresponds sk2.args) (isComparableSkolemType)))
+        case _ => false
+      }
+    } finally {
+      skolemizationLevel -= 1
+    }
+  )
+  // this comparison intentionally ignores the name of the symbol.
+  private def isComparableSkolemType(tp1: Type, tp2: Type): Boolean =
+    (tp1, tp2) match {
+      case (sk1: TypeRef, sk2: TypeRef) =>
+        sk1.sym.info =:= sk2.sym.info &&
+          sk1.pre =:= sk2.pre
+      case _ => false
+    }
+
   // @pre: at least one argument has annotations
   private def sameAnnotatedTypes(tp1: Type, tp2: Type) = (
        annotationsConform(tp1, tp2)
@@ -126,6 +150,7 @@ trait TypeComparers {
   private def isSameType1(tp1: Type, tp2: Type): Boolean = typeRelationPreCheck(tp1, tp2) match {
     case state if state.isKnown                                  => state.booleanValue
     case _ if typeHasAnnotations(tp1) || typeHasAnnotations(tp2) => sameAnnotatedTypes(tp1, tp2)
+    case _ if containsExistential(tp1) || containsExistential(tp2) => sameExistentialTypes(tp1, tp2)
     case _                                                       => isSameType2(tp1, tp2)
   }
 
