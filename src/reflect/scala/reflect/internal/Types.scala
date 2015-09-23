@@ -3912,6 +3912,7 @@ trait Types
 
   def containsExistential(tpe: Type) = tpe exists typeIsExistentiallyBound
   def existentialsInType(tpe: Type) = tpe withFilter typeIsExistentiallyBound map (_.typeSymbol)
+  def containsNothing(tpe: Type): Boolean = typeIsNothing(tpe) || tpe.typeArgs.exists(containsNothing)
 
   private def isDummyOf(tpe: Type)(targ: Type) = {
     val sym = targ.typeSymbol

@@ -415,6 +415,32 @@ private[internal] trait GlbLubs {
         }
         t0
     }
+    // implements -Yno-lub
+    // lub will fail except for the following cases:
+    // 1. Unification with Nothing
+    def doNoLub(ts0: List[Type]): Type = {
+      // if Nothing is involved, just check that that the type constructors match up
+      def nothingOrSimilar(tp1: Type, tp2: Type): Boolean = {
+        typeIsNothing(tp1) || typeIsNothing(tp2) || (tp1.normalize.typeSymbol eq tp2.normalize.typeSymbol)
+      }
+      ts0 match {
+        case List() => NothingTpe
+        case List(t) => t
+        case t0 :: rest if (t0 :: rest).exists(containsNothing) =>
+          if (rest forall { t => nothingOrSimilar(t0, t)
+          }) ()
+          else {
+            throw new NotSameTypes(ts0)
+          }
+          lub0(ts0)
+        case t0 :: rest =>
+          if (rest forall { t => isSameType(t0, t)
+          }) t0
+          else {
+            throw new NotSameTypes(ts0)
+          }
+      }
+    }
     if (printLubs) {
       println(indent + "lub of " + ts + " at depth "+depth)//debug
       indent = indent + "  "
@@ -422,7 +448,7 @@ private[internal] trait GlbLubs {
     }
     if (StatisticsStatics.areSomeColdStatsEnabled) statistics.incCounter(nestedLubCount)
     val res =
-      if (noLub) checkSameTypes(ts)
+      if (noLub) doNoLub(ts)
       else lub0(ts)
     if (printLubs) {
       indent = indent stripSuffix "  "
