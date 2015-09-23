@@ -406,18 +406,10 @@ private[internal] trait GlbLubs {
       // the likely and maybe only spot they escape, so fixing here for 2.10.1.
       existentialAbstraction(tparams, dropIllegalStarTypes(lubType))
     }
-    def checkSameTypes(ts0: List[Type]): Type = ts0 match {
-      case List() => NothingTpe
-      case List(t) => t
-      case t0 :: rest =>
-        rest foreach { t =>
-          if (!isSameType(t0, t)) throw new NotSameTypes(ts0)
-        }
-        t0
-    }
     // implements -Yno-lub
-    // lub will fail except for the following cases:
+    // lub will fail when it finds different types except for the following cases:
     // 1. Unification with Nothing
+    // 2. Unification of existential types
     def doNoLub(ts0: List[Type]): Type = {
       // if Nothing is involved, just check that that the type constructors match up
       def nothingOrSimilar(tp1: Type, tp2: Type): Boolean = {
@@ -432,6 +424,8 @@ private[internal] trait GlbLubs {
           else {
             throw new NotSameTypes(ts0)
           }
+          lub0(ts0)
+        case t0 :: rest if (t0 :: rest).exists(containsExistential) =>
           lub0(ts0)
         case t0 :: rest =>
           if (rest forall { t => isSameType(t0, t)
