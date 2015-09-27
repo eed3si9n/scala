@@ -159,21 +159,35 @@ trait Unapplies extends ast.TreeDSL {
       case _                                                          => nme.unapply
     }
     val cparams    = List(ValDef(Modifiers(PARAM | SYNTHETIC), unapplyParamName, classType(cdef, tparams), EmptyTree))
-    val resultType = if (!settings.isScala212) TypeTree() else { // fix for scala/bug#6541 under -Xsource:2.12
-    def repeatedToSeq(tp: Tree) = tp match {
-        case AppliedTypeTree(Select(_, tpnme.REPEATED_PARAM_CLASS_NAME), tps) => AppliedTypeTree(gen.rootScalaDot(tpnme.Seq), tps)
-        case _                                                                => tp
+    val resultType =
+      if (!settings.isScala212 && !settings.noLub) TypeTree()
+      else { // fix for SI-6541 under -Xsource:2.12
+        def repeatedToSeq(tp: Tree) = tp match {
+          case AppliedTypeTree(Select(_, tpnme.REPEATED_PARAM_CLASS_NAME), tps) => AppliedTypeTree(gen.rootScalaDot(tpnme.Seq), tps)
+          case _                                                                => tp
+        }
+        constrParamss(cdef) match {
+          case Nil | Nil :: _ =>
+            gen.rootScalaDot(tpnme.Boolean)
+          case params :: _ =>
+            val constrParamTypes = params.map(param => repeatedToSeq(param.tpt))
+            AppliedTypeTree(gen.rootScalaDot(tpnme.Option), List(treeBuilder.makeTupleType(constrParamTypes)))
+        }
       }
-      constrParamss(cdef) match {
-        case Nil | Nil :: _ =>
-          gen.rootScalaDot(tpnme.Boolean)
-        case params :: _ =>
-          val constrParamTypes = params.map(param => repeatedToSeq(param.tpt))
-          AppliedTypeTree(gen.rootScalaDot(tpnme.Option), List(treeBuilder.makeTupleType(constrParamTypes)))
+    val ifNull     =
+      if (constrParamss(cdef).head.isEmpty) FALSE
+      else {
+        REF(NoneModule) match {
+          case x if settings.noLub => Typed(x, resultType)
+          case x                   => x
+        }
       }
-    }
-    val ifNull     = if (constrParamss(cdef).head.isEmpty) FALSE else REF(NoneModule)
-    val body       = nullSafe({ case Ident(x) => caseClassUnapplyReturnValue(x, cdef) }, ifNull)(Ident(unapplyParamName))
+    val body       = nullSafe({ case Ident(x) =>
+      caseClassUnapplyReturnValue(x, cdef) match {
+        case x if settings.noLub => Typed(x, resultType)
+        case x                   => x
+      }
+    }, ifNull)(Ident(unapplyParamName))
 
     atPos(cdef.pos.focus)(
       DefDef(caseMods, method, tparams, List(cparams), resultType, body)
