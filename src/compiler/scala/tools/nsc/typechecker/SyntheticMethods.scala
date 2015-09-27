@@ -97,7 +97,7 @@ trait SyntheticMethods extends ast.TreeDSL {
     // like Tags and Arrays which are not robust and infer things
     // which they shouldn't.
     val accessorLub  = (
-      if (settings.Xexperimental) {
+      if (settings.Xexperimental && !settings.noLub) {
         global.lub(accessors map (_.tpe.finalResultType)) match {
           case RefinedType(parents, decls) if !decls.isEmpty => intersectionType(parents)
           case tp                                            => tp
@@ -246,7 +246,7 @@ trait SyntheticMethods extends ast.TreeDSL {
       List(
         Product_productPrefix   -> (() => constantNullary(nme.productPrefix, clazz.name.decode)),
         Product_productArity    -> (() => constantNullary(nme.productArity, arity)),
-        Product_productElement  -> (() => perElementMethod(nme.productElement, accessorLub)(mkThisSelect)),
+        Product_productElement  -> (() => perElementMethod(nme.productElement, accessorLub)(productElementImplementation)),
         Product_iterator        -> (() => productIteratorMethod),
         Product_canEqual        -> (() => canEqualMethod)
         // This is disabled pending a reimplementation which doesn't add any
@@ -254,6 +254,12 @@ trait SyntheticMethods extends ast.TreeDSL {
         // Product_productElementName  -> (() => productElementNameMethod(accessors)),
       )
     }
+
+    def productElementImplementation(sym: Symbol): Tree =
+      mkThisSelect(sym) match {
+        case x if settings.noLub => Typed(x, TypeTree(AnyTpe))
+        case x                   => x
+      }
 
     def hashcodeImplementation(sym: Symbol): Tree = {
       sym.tpe.finalResultType.typeSymbol match {
