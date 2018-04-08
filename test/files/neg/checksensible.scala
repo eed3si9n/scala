@@ -42,11 +42,8 @@ class EqEqValTest {
 
   1 != true
   () == true
-  () == ()
   () == println
   () == scala.runtime.BoxedUnit.UNIT // these should warn for always being true/false
-  scala.runtime.BoxedUnit.UNIT != ()
-  (scala.runtime.BoxedUnit.UNIT: java.io.Serializable) != () // shouldn't warn
 
   (1 != println)
   (1 != 'sym)
