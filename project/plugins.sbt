@@ -35,3 +35,5 @@ addSbtPlugin("de.heikoseeberger" % "sbt-header" % "5.0.0")
 addSbtPlugin("pl.project13.scala" % "sbt-jmh" % "0.2.27")
 
 addSbtPlugin("com.lightbend" % "sbt-whitesource" % "0.1.16")
+
+addSbtPlugin("org.foundweekends" % "sbt-bintray" % "0.5.5")

@@ -81,6 +81,7 @@ lazy val publishSettings : Seq[Setting[_]] = Seq(
     if (file.exists && !file.isDirectory) List(Credentials(file))
     else Nil
   },
+  bintrayPackage := "scala",
   // Add a "default" Ivy configuration because sbt expects the Scala distribution to have one:
   ivyConfigurations += Configuration("default", "Default", true, List(Configurations.Runtime), true),
   publishMavenStyle := true
@@ -93,7 +94,7 @@ lazy val publishSettings : Seq[Setting[_]] = Seq(
 globalVersionSettings
 baseVersion in Global       := "2.12.11"
 baseVersionSuffix in Global := "SNAPSHOT"
-organization in ThisBuild   := "org.scala-lang"
+organization in ThisBuild   := "com.eed3si9n"
 homepage in ThisBuild       := Some(url("https://www.scala-lang.org"))
 startYear in ThisBuild      := Some(2002)
 licenses in ThisBuild       += (("Apache-2.0", url("https://www.apache.org/licenses/LICENSE-2.0")))
