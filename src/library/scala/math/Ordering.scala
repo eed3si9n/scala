@@ -370,17 +370,17 @@ object Ordering extends LowPriorityOrderingImplicits {
 
   /** `Ordering`s for `Float`s.
     *
-    * The behavior of the comparison operations provided by default (implicit)
-    * ordering on `Float` has changed in 2.10.0 and 2.13.0.
-    * Prior to Scala 2.10.0, the `Ordering` instance used the semantics
+    * The behavior of the comparison operations provided by the default (implicit)
+    * ordering on `Float` changed in 2.10.0 and 2.13.0.
+    * Prior to Scala 2.10.0, the `Ordering` instance used semantics
     * consistent with `java.lang.Float.compare`.
     *
-    * Scala 2.10.0 changed the implementation of `lt`, `equiv`, `min` etc to be
-    * IEEE 754 compliant, while keeping `compare` method NOT compliant,
-    * creating an internally inconsistent instance. IEEE 754 specified that
-    * `0.0F == -0.0F`. In addition, all comparisons with `Float.NaN` must return
+    * Scala 2.10.0 changed the implementation of `lt`, `equiv`, `min`, etc., to be
+    * IEEE 754 compliant, while keeping the `compare` method NOT compliant,
+    * creating an internally inconsistent instance. IEEE 754 specifies that
+    * `0.0F == -0.0F`. In addition, it requires all comparisons with `Float.NaN` return
     * `false` thus `0.0F < Float.NaN`, `0.0F > Float.NaN`, and
-    * `Float.NaN == Float.NaN` all yield `false`, analogous to `None`.
+    * `Float.NaN == Float.NaN` all yield `false`, analogous calling `exists` on `None`.
     *
     * Recognizing the limitation of the IEEE 754 semantics in terms of ordering,
     * Scala 2.13.0 created two instances: `Ordering.Float.IeeeOrdering`, which retains
@@ -454,26 +454,26 @@ object Ordering extends LowPriorityOrderingImplicits {
     implicit object IeeeOrdering extends IeeeOrdering
   }
   @migration(
-    "  The new ordering does not affect the sorting, placing NaN at the end.\n" +
-    "  However, methods such as `lt`, `min`, and `equiv` now match `compare`\n" +
-    "  instead of having IEEE 754 behavior for -0.0F and NaN.\n" +
-    "  Import Ordering.Float.IeeeOrdering to retain the previous behavior.\n" +
-    "  See also https://www.scala-lang.org/api/current/scala/math/Ordering$$Float$.html", "2.13.0")
+    "  The default implicit ordering for floats now maintains consistency\n" +
+    "  between its `compare` method and its `lt`, `min`, `equiv`, etc., methods,\n" +
+    "  at the cost of nonconforming to IEEE 754's behavior for -0.0F and NaN.\n" +
+    "  Import Ordering.Float.IeeeOrdering to recover the previous behavior.\n" +
+    "  See also https://www.scala-lang.org/api/current/scala/math/Ordering$$Float$.html.", "2.13.0")
   implicit object DeprecatedFloatOrdering extends Float.TotalOrdering
 
   /** `Ordering`s for `Double`s.
     *
-    * The behavior of the comparison operations provided by default (implicit)
-    * ordering on `Double` has changed in 2.10.0 and 2.13.0.
-    * Prior to Scala 2.10.0, the `Ordering` instance used the semantics
+    * The behavior of the comparison operations provided by the default (implicit)
+    * ordering on `Double` changed in 2.10.0 and 2.13.0.
+    * Prior to Scala 2.10.0, the `Ordering` instance used semantics
     * consistent with `java.lang.Double.compare`.
     *
-    * Scala 2.10.0 changed the implementation of `lt`, `equiv`, `min` etc to be
-    * IEEE 754 compliant, while keeping `compare` method NOT compliant,
-    * creating an internally inconsistent instance. IEEE 754 specified that
-    * `0.0 == -0.0`. In addition, all comparisons with `Double.NaN` must return
+    * Scala 2.10.0 changed the implementation of `lt`, `equiv`, `min`, etc., to be
+    * IEEE 754 compliant, while keeping the `compare` method NOT compliant,
+    * creating an internally inconsistent instance. IEEE 754 specifies that
+    * `0.0 == -0.0`. In addition, it requires all comparisons with `Double.NaN` return
     * `false` thus `0.0 < Double.NaN`, `0.0 > Double.NaN`, and
-    * `Double.NaN == Double.NaN` all yield `false`, analogous to `None`.
+    * `Double.NaN == Double.NaN` all yield `false`, analogous calling `exists` on `None`.
     *
     * Recognizing the limitation of the IEEE 754 semantics in terms of ordering,
     * Scala 2.13.0 created two instances: `Ordering.Double.IeeeOrdering`, which retains
@@ -547,10 +547,10 @@ object Ordering extends LowPriorityOrderingImplicits {
     implicit object IeeeOrdering extends IeeeOrdering
   }
   @migration(
-    "  The new ordering does not affect the sorting, placing NaN at the end.\n" +
-    "  However, methods such as `lt`, `min`, and `equiv` now match `compare`\n" +
-    "  instead of having IEEE 754 behavior for -0.0 and NaN.\n" +
-    "  Import Ordering.Double.IeeeOrdering to retain the previous behavior.\n" +
+    "  The default implicit ordering for doubles now maintains consistency\n" +
+    "  between its `compare` method and its `lt`, `min`, `equiv`, etc., methods,\n" +
+    "  at the cost of nonconforming to IEEE 754's behavior for -0.0 and NaN.\n" +
+    "  Import Ordering.Double.IeeeOrdering to recover the previous behavior.\n" +
     "  See also https://www.scala-lang.org/api/current/scala/math/Ordering$$Double$.html.", "2.13.0")
   implicit object DeprecatedDoubleOrdering extends Double.TotalOrdering
 

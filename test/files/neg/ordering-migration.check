@@ -1,24 +1,24 @@
 ordering-migration.scala:3: warning: object DeprecatedFloatOrdering in object Ordering has changed semantics in version 2.13.0:
-  The new ordering does not affect the sorting, placing NaN at the end.
-  However, methods such as `lt`, `min`, and `equiv` now match `compare`
-  instead of having IEEE 754 behavior for -0.0F and NaN.
-  Import Ordering.Float.IeeeOrdering to retain the previous behavior.
-  See also https://www.scala-lang.org/api/current/scala/math/Ordering$$Float$.html
+  The default implicit ordering for floats now maintains consistency
+  between its `compare` method and its `lt`, `min`, `equiv`, etc., methods,
+  at the cost of nonconforming to IEEE 754's behavior for -0.0F and NaN.
+  Import Ordering.Float.IeeeOrdering to recover the previous behavior.
+  See also https://www.scala-lang.org/api/current/scala/math/Ordering$$Float$.html.
   val f = Ordering[Float]
                   ^
 ordering-migration.scala:4: warning: object DeprecatedDoubleOrdering in object Ordering has changed semantics in version 2.13.0:
-  The new ordering does not affect the sorting, placing NaN at the end.
-  However, methods such as `lt`, `min`, and `equiv` now match `compare`
-  instead of having IEEE 754 behavior for -0.0 and NaN.
-  Import Ordering.Double.IeeeOrdering to retain the previous behavior.
+  The default implicit ordering for doubles now maintains consistency
+  between its `compare` method and its `lt`, `min`, `equiv`, etc., methods,
+  at the cost of nonconforming to IEEE 754's behavior for -0.0 and NaN.
+  Import Ordering.Double.IeeeOrdering to recover the previous behavior.
   See also https://www.scala-lang.org/api/current/scala/math/Ordering$$Double$.html.
   val d = Ordering[Double]
                   ^
 ordering-migration.scala:7: warning: object DeprecatedDoubleOrdering in object Ordering has changed semantics in version 2.13.0:
-  The new ordering does not affect the sorting, placing NaN at the end.
-  However, methods such as `lt`, `min`, and `equiv` now match `compare`
-  instead of having IEEE 754 behavior for -0.0 and NaN.
-  Import Ordering.Double.IeeeOrdering to retain the previous behavior.
+  The default implicit ordering for doubles now maintains consistency
+  between its `compare` method and its `lt`, `min`, `equiv`, etc., methods,
+  at the cost of nonconforming to IEEE 754's behavior for -0.0 and NaN.
+  Import Ordering.Double.IeeeOrdering to recover the previous behavior.
   See also https://www.scala-lang.org/api/current/scala/math/Ordering$$Double$.html.
   list.sorted
        ^
