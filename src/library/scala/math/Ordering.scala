@@ -380,7 +380,7 @@ object Ordering extends LowPriorityOrderingImplicits {
     * creating an internally inconsistent instance. IEEE 754 specifies that
     * `0.0F == -0.0F`. In addition, it requires all comparisons with `Float.NaN` return
     * `false` thus `0.0F < Float.NaN`, `0.0F > Float.NaN`, and
-    * `Float.NaN == Float.NaN` all yield `false`, analogous `None` in `flatMap.
+    * `Float.NaN == Float.NaN` all yield `false`, analogous `None` in `flatMap`.
     *
     * Recognizing the limitation of the IEEE 754 semantics in terms of ordering,
     * Scala 2.13.0 created two instances: `Ordering.Float.IeeeOrdering`, which retains
