@@ -1,7 +1,8 @@
 ordering-migration.scala:3: warning: object DeprecatedFloatOrdering in object Ordering has changed semantics in version 2.13.0:
   The default implicit ordering for floats now maintains consistency
   between its `compare` method and its `lt`, `min`, `equiv`, etc., methods,
-  at the cost of nonconforming to IEEE 754's behavior for -0.0F and NaN.
+  which means nonconforming to IEEE 754's behavior for -0.0F and NaN.
+  The sort order of floats remains the same, however, with NaN at the end.
   Import Ordering.Float.IeeeOrdering to recover the previous behavior.
   See also https://www.scala-lang.org/api/current/scala/math/Ordering$$Float$.html.
   val f = Ordering[Float]
@@ -9,7 +10,8 @@ ordering-migration.scala:3: warning: object DeprecatedFloatOrdering in object Or
 ordering-migration.scala:4: warning: object DeprecatedDoubleOrdering in object Ordering has changed semantics in version 2.13.0:
   The default implicit ordering for doubles now maintains consistency
   between its `compare` method and its `lt`, `min`, `equiv`, etc., methods,
-  at the cost of nonconforming to IEEE 754's behavior for -0.0 and NaN.
+  which means nonconforming to IEEE 754's behavior for -0.0 and NaN.
+  The sort order of doubles remains the same, however, with NaN at the end.
   Import Ordering.Double.IeeeOrdering to recover the previous behavior.
   See also https://www.scala-lang.org/api/current/scala/math/Ordering$$Double$.html.
   val d = Ordering[Double]
@@ -17,7 +19,8 @@ ordering-migration.scala:4: warning: object DeprecatedDoubleOrdering in object O
 ordering-migration.scala:7: warning: object DeprecatedDoubleOrdering in object Ordering has changed semantics in version 2.13.0:
   The default implicit ordering for doubles now maintains consistency
   between its `compare` method and its `lt`, `min`, `equiv`, etc., methods,
-  at the cost of nonconforming to IEEE 754's behavior for -0.0 and NaN.
+  which means nonconforming to IEEE 754's behavior for -0.0 and NaN.
+  The sort order of doubles remains the same, however, with NaN at the end.
   Import Ordering.Double.IeeeOrdering to recover the previous behavior.
   See also https://www.scala-lang.org/api/current/scala/math/Ordering$$Double$.html.
   list.sorted
